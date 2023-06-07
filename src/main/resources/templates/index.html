@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"> <!-- 타임리프라는 th 속성을 추가하겠다. 자동완성 기능 -->
+<!--
+spring boot 설정에 /template 폴더 하위에 있는 모든 html 을 타임리프로 렌더링한다.
+확장자는 html 이지만 서버에서 렌더링(서버사이드. 서버렌더 == template 엔진(== 뷰 엔진))하는 동적페이지
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>
+        안녕 스프링 부트
+        <span th:text="${120+6600}"></span> <!--타임리프는 th 속성에 있는 값을 렌더링한다.--><!-- 자동저장이 되는데 저장을 누르면 좀더 빠르게 바뀐다-->
+    </h1>
+    <p>스프링 부트는 자바 웹앱을 MVC 패턴으로 개발하는 프레임워크 입니다.</p>
+    <h2>spring-boot-devtools 개발자 도구</h2>
+    <ul>
+        <li>spring 내부의 코드가 변경되면 서버 재시작 및 배포를 진행</li>
+        <li>크롬 브라우저와 소켓 통신을 하다가 서버 재시작을 하면 브라우저를 새로고침 한다.</li>
+        <li>intellij 에서 컴파일러 설정에 자동 새로고침을 허용해야 한다.</li>
+        <li>크롬 확장 프로그램에서 liveReload 를 추가해야 한다. </li>
+        <li>https://chrome.google.com/webstore/detail/livereload%2B%2B/ciehpookapcdlakedibajeccomagbfab?hl=ko</li>
+        <li>인텔리제이의 Build Project Automatically 설정이 체크되어 있는지 확인합니다. (File -> Settings -> Build, Execution, Deployment -> Compiler)</li>
+    </ul>
+    <h2>spring-boot-start-web 웹앱을 개발하는 프레임워크</h2>
+    <ul>
+        <li>tomcat(10.~ 버전 이상) 이 포함 (이클립스재단에서 개발중인 jakarta)</li>
+        <li>톰캣 서블릿에 해당하는 컨트롤러(@Controller)를 작성할 수 있다.(요청과 응답처리)</li>
+        <li>컨트롤러를 작성할때 꼭! 필수적으로 처음 생성된 패키지 하위에 작성해야 한다. (component-scan 설정 : 내부적인 컴포넌트 스캔 후(컴포넌트 어노테이션 검색 후) bean 객체 등록 / 처음 생성된 패키지를 베이스 패키지로)(그래야 컨트롤러인 것을 검사한다.) </li>
+        <li>Jackson 라이브러리가 포함되어 있어서 json 파싱을 편하게 작성할 수 있다.</li>
+        <li>RESTFull API 제공(다양한 메서드[GET(==PATCH) ,POST + PUT(수정), DELETE, PATCH(리소스 일부수정)], Pathvariable - 패스의 파라미터 전송) </li>
+<!--        처음 생성된 패키지의 Application 파일 @ComponentSacn 을 가짐 => 해당 클래스가 위치한 디렉토리(패키지) 전체를 컴포넌트 스캔-->
+
+        <li>
+            <a href="/sum.do?a=1&b=10">sum.do?a=1&b=10</a>
+        </li>
+        <li>
+            <a href="/mult.do?a=3&b=7">mult.do?a=3&b=7</a>
+        </li>
+    </ul>
+    <h2>spring-mybatis (session(쿼리의상태)-factory(컨테이너. 생성해서전달)</h2>
+    <ul>
+        <li><a href="/users/list.do">DataSource 를 이용한 JDBC 유저 리스트</a></li>
+        <li><a href="/users/mybatisList.do">Mybatis 유저 리스트</a></li>
+    </ul>
+
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--        xml 상단에 어떤 xml 이다 라고 형식을 지정해야함-->
+<!--    mapper namespace : 어떤 인터페이스를 구현할건지 명시-->
+<mapper namespace="com.acorn.springstartstudy.mapper.UsersMapper">
+
+
+<!--  🍎resultMap : DTO 의 필드명(uId)와 db 테이블의 칼럼명(u_id)이 다를 때 맵핑하기 위해 작성 -->
+<!--    id : type 을 담을 변수명 / type : 맵핑할 dto-->
+    <resultMap id="UsersMap" type="com.acorn.springstartstudy.dto.UsersDto">
+<!--        (mybatis 가 반환타입 DTO 필드명을 기준으로 dto 의 필드명과 테이블의 칼럼명이 같은 것을 맵핑)-->
+<!--        SELECT *, u_id uId FROM USERS WHERE u_id=#{uId}-->
+<!--        => SELECT * FROM USERS WHERE u_id=#{uId}-->
+        <id column="u_id" property="uId"/> <!--column : pk -->
+        <result column="name" property="name"/>
+        <result column="pw" property="pw"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="post_time" property="postTime"/>
+        <result column="birth" property="birth"/>
+        <result column="img_path" property="imgPath"/>
+        <result column="gender" property="gender"/>
+        <result column="address" property="address"/>
+        <result column="detail_address" property="detailAddress"/>
+        <result column="permission" property="permission"/>
+<!--        /> :  비어있는. 열고 닫기-->
+    </resultMap>
+
+    <insert id="insertOne" parameterType="com.acorn.springstartstudy.dto.UsersDto">
+        INSERT INTO users
+        (u_id,pw,name,phone,img_path,email,birth,gender,address,detail_address)
+        VALUE
+        (#{uId},#{pw},#{name},#{phone},#{imgPath},#{email},#{birth},#{gender},#{address},#{detailAddress})
+    </insert>
+
+
+    <update id="updateOne" parameterType="com.acorn.springstartstudy.dto.UsersDto">
+<!--        파라미터 타입을 써야한다  -->
+        UPDATE users SET
+            name=#{name},
+            pw=#{pw},
+            phone=#{phone},
+            email=#{email},
+            birth=#{birth},
+            img_path=#{imgPath},
+            gender=#{gender},
+            address=#{address},
+            detail_address=#{detailAddress}
+                WHERE u_id=#{uId}
+
+<!--        dto 의 이름-->
+    </update>
+
+    <delete id="deleteByUIdAndPw" parameterType="com.acorn.springstartstudy.dto.UsersDto">
+        DELETE FROM users WHERE u_id=#{uId} AND pw=#{pw}
+    </delete>
+    <!--    id 는 맵핑하기 위해 만든 변수명 -->
+
+<!--    resultType 의 dto 의 필드명과 칼럼명이 같은 것을 맵핑 -->
+    <select id="findAll" resultMap="UsersMap">
+<!--    <select id="findAll" resultType="com.acorn.springstartstudy.dto.UsersDto">-->
+        SELECT * FROM USERS
+<!--        함수를 호출하면 쿼리 결과가 실행되서 맵핑된 결과(resultType)가 나온다. -->
+<!--        함수이름 -->
+<!--        구현하고 싶은  쿼리 -->
+<!--        인터페이스를 마이바티스가 관리해준다.-->
+    </select>
+    <select id="findByUId" resultMap="UsersMap">
+        SELECT * FROM USERS WHERE u_id=#{uId}
+<!--        파라미터는 #  uId : UsersMapper.java 에서 전달받은 파라미터 -->
+<!--        uId 는 UsersDto 의 필드명-->
+    </select>
+
+</mapper>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <h1>
+    sum.do param.a + param.b =
+<!--    <span th:text="${#strings.concat(param.a,param.b)}"></span>-->결
+    <span th:text="${param.a}+${param.b}"></span>
+<!--  파라미터의 a, b => param.a // ${} 변수를 찾겠다.-->
+<!--    ${param.a + param.b}  타임리프는 정수 연산이 안된다. =>  concat : 문자열 더하기 연산 // 타임리프에서 문자열 더하기 연산 #strings.concat(param.a,param.b)-->
+
+  </h1>
+    <p>param : 타임리프가 뷰를 렌더하면서 쿼리스트링을 객체로 변경</p>
+    <h1>
+        sum.do a+b =
+        <span th:text="${a}+${b}"></span>
+    </h1>
+    <p>a,b : 컨트롤러에서 타임리프를 렌더링할때 model 로 전달한 객체</p>
+    <p>컨트롤러에서 파라미터를 받을 때는 파라미터와 같은 이름의 매개변수를 작성하면 된다.
+        (만약 타입이 다르면. 형변환 불가면 오류가 뜬다 : 400(파라미터가 없거나. 파라미터의 타입이 안맞는경우) 에러처리 자동으로 해준다.)</p>
+<!--    컨트롤러에 int 타입으로 파라미터 타입을 설정했는데 url 에 십 이런식으로 한글을 쓰면 타입이 안맞아서 400 에러 된다 -->
+
+</body>
+</html>

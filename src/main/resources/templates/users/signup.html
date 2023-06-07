@@ -1,0 +1,287 @@
+<html>
+<head>
+  <title>Title</title>
+  <style>
+    .error {
+      color: darkred;
+    }
+
+    .success {
+      color: seagreen;
+    }
+
+    /*.form-control.success{*/
+    /*  color: seagreen;*/
+    /*}*/
+    /*.form-control.success input {*/
+    /*  border-color: seagreen;*/
+    /*}*/
+
+  </style>
+</head>
+<body>
+<main class="container">
+  <!--  🍎파일을 파라미터로 전송하려면 form 의 enctype-->
+  <!--  default : form 은 문자열 파라미터만 쿼리스트링(== x-www-form-urlencoded/enctype="application/x-www-form-urlencode)으로 전송 (파일은 무시. 파일 이름만 전송)-->
+  <!--  => 회원가입 버튼을 눌러서 전송을 하면 문자열 이 전송된다.-->
+  <!--  multipart/form-data : form의 모든 데이터를 blob 바이너리 형식으로 전송 (file == BLOB)-->
+  <!--  => 회원가입 버튼을 눌러서 전송을 하면 null 이 전송된다.-->
+
+  <!--  톰캣 서블릿 : multipart/form-data 를 처리할 수 없어서 cos.jar 라이브러리를 사용했어야한다.-->
+  <!--  => 🍎톰캣 7(서블릿 3.0)이상부터는 @MultipartConfig 를 사용-->
+  <!-- 🍏입력창에 자동입력이 되는경우 - 크롬브라우저 자동완성기능 끄기 -->
+  <form name="signupForm" action="./signup.do" method="post">
+    <h1 class="my-4">회원가입</h1>
+    <p class="form-floating">
+      <label class="valid-feedback">아이디</label>
+      <input id="uIdInput" type="text" name="uId" value="" class="form-control is-valid">
+    <p id="idMsg"></p>
+    </p>
+    <p class="form-floating">
+      <label>이름</label>
+      <input id="unameInput" type="text" name="name" value="" class="">
+    <p id="nameMsg"></p>
+    </p>
+    <p class="form-floating">
+      <label>패스워드</label>
+      <input id="pwInput" type="password" name="pw" value="" class="">
+    <p id="pwMsg"></p>
+    </p>
+    <p class="form-floating">
+      <label>패스워드 체크</label>
+      <input id="cpwInput" type="password" name="check_pw" value="" class="form-control">
+    <p id="cpwMsg"></p>
+    </p>
+    <p class="input-group">
+      <label class="input-group-text">프로필</label>
+      <input type="file" name="img_path" value="" class="form-control">
+    </p>
+    <p class="form-floating">
+      <label>핸드폰</label>
+      <input type="text" name="phone" value="" class="form-control">
+    <p id="phoneMsg"></p>
+    </p>
+    <p class="form-floating">
+      <label>이메일</label>
+      <input type="text" name="email" value="" class="form-control">
+    <p id="emailMsg"></p>
+    </p>
+    <p class="form-floating">
+      <label>생일</label>
+      <input type="date" name="birth" value="" class="form-control">
+    <p id="birthMsg"></p>
+    </p>
+    <p class="form-floating">
+      <label>성별</label>
+      <select name="gender" class="form-control">
+        <option value="MALE" >남자</option>
+        <option value="FEMALE" >여자</option>
+        <option value="NONE" selected>없음</option>
+      </select>
+    </p>
+
+    <p class="form-floating">
+      <label>주소</label>
+      <input type="text" name="address" value="" class="form-control">
+    <p id="addMsg"></p>
+    </p>
+
+    <p class="form-floating">
+      <label>주소상세</label>
+      <input type="text" name="detail_address" value="" class="form-control">
+    <p id="detailAddMsg"></p>
+    </p>
+
+    <p class="text-end">
+      <button class="btn btn-outline-warning" type="reset">초기화</button>
+      <button class="btn btn-outline-primary">등록</button>
+    </p>
+  </form>
+
+
+  <script>
+    const signupForm=document.forms["signupForm"];
+    signupForm.uId.addEventListener("change",uIdHandler); // change 이벤트(입력후 마우스 바깥을 클릭)가 발생하면 uIdHandler 함수 실행 // name 을 필드로 쓸수있다.
+    signupForm.name.addEventListener("change",unameCheck);
+    signupForm.pw.addEventListener("change",upwCheck);
+    signupForm.check_pw.addEventListener("change",ucpwCheck);
+    signupForm.birth.addEventListener("change",birthCheck);
+    signupForm.phone.addEventListener("change",uphoneCheck);
+    signupForm.email.addEventListener("change",uemailCheck);
+
+    signupForm.onsubmit=async function(e){ // async 사용 - 콜백함수는 비동기 실행이라서. await 를 이용해 동기실행
+      e.preventDefault(); // 버튼 송신막는다.
+      let uIdCheck=await uIdHandler(); // 함수 호출
+      let nameCheck=unameCheck();
+      let pwCheck=upwCheck();
+      let checkPw=ucpwCheck();
+      let btCheck=birthCheck();
+      let phoneCheck=uphoneCheck();
+      let emailCheck=uemailCheck();
+
+      if(uIdCheck && nameCheck && pwCheck && checkPw && btCheck && phoneCheck && emailCheck) {
+        signupForm.submit();
+      }
+
+      // if(!uIdCheck){ // uIdCheck 가 false 인경우
+      //   window.location.href="#uIdInput"; // #으로 쓰면 = 했을때 url 의 뒤에 붙는다. (+ 더하기 안해도.. 원리는 모르겠지만)
+      // }else if(!nameCheck){
+      //   window.location.href="#unameInput";
+      // }else if(!pwCheck){
+      //   window.location.href="#pwInput";
+      // }else if(!checkPw){
+      //   window.location.href="#cpwInput";
+      // }else{
+      //   signupForm.submit();
+      // }
+
+    }
+    // 🍎AJAX 비동기 통신 : fetch(프로미스 객체를 반환) => async await 함수로 비동기실행->동기실행
+    async function uIdHandler(){
+      let uId=signupForm.uId.value;
+      let url="./idCheck.do?uId="+uId; // 주소로 검색해서 결과 받기
+      // ./ 점 슬러시라는 것은 전체 url 에서 뒤에서 첫번째 / 슬러시의 주소를 signup.do => idCheck.do?uId="+uId 로 바꾸겠다.
+      // ./ == /signup.do
+      // ../ == /users/signup.do
+      // ../../ == 한칸 더 뒤로 가고 싶으면
+      // localhost:8080/ 에 가고싶으면 == "/" /idCheck.do  => localhost:8080/idCheck.do
+      // 현재파일 signup.jsp 의 url 주소 : localhost:8080/webAppBoard/users/signup.do
+      // let url => localhost:8080:webAppBoard/users/idCheck.do?uId="+uId
+      const res=await fetch(url); // 첫번째 콜백함수의 then 반환
+      if(res.status==200){
+        const obj=await res.json(); // {idCheck:true/false} // json 문자열을 오브젝트로 변환
+        if(obj.idCheck) { // 이미사용중인 아이디 // true
+          idMsg.innerText="이미 사용중인 아이디입니다.";
+          idMsg.classList.add("error");
+          idMsg.classList.remove("success");
+          return false;
+        }else if(uId && uId.trim().length>1){ // 사용가능한 아이디
+          idMsg.innerText="사용가능한 아이디입니다.";
+          idMsg.classList.add("success");
+          idMsg.classList.remove("error");
+          return true;
+        }else if(!uId){
+          idMsg.innerText="아이디를 입력하세요.";
+          idMsg.classList.add("error");
+          idMsg.classList.remove("success");
+          return false;
+        }else {
+          idMsg.innerText="아이디 2글자 이상 입력하세요!";
+          idMsg.classList.add("error");
+          idMsg.classList.remove("success");
+          return false;
+        }
+      }else {
+        alert("오류 :" + res.status);
+      }
+    }
+
+    function unameCheck(){
+      let name=signupForm.name.value;
+      if(name && name.trim().length>1){
+        nameMsg.innerText="사용가능한 이름";
+        nameMsg.classList.add("success");
+        nameMsg.classList.remove("error");
+        return true;
+      }else if(!name){
+        nameMsg.innerText="이름를 입력하세요.";
+        nameMsg.classList.add("error");
+        nameMsg.classList.remove("success");
+        return false;
+      }
+      else{
+        nameMsg.innerText = "이름은 2글자 이상 입력하세요!";
+        nameMsg.classList.add("error");
+        nameMsg.classList.remove("success");
+        return false;
+      }
+    }
+
+    function upwCheck(){
+      let pw=signupForm.pw.value; // 와... 무조건 함수안에 변수선언되어야한다. 함수바깥에 선언시 함수 적용안됨
+      if(!pw){
+        pwMsg.innerText="비밀번호를 입력하세요.";
+        pwMsg.classList.add("error");
+        pwMsg.classList.remove("success");
+        return false;
+      }else if(pw && pw.trim().length>1){
+        pwMsg.innerText="사용가능한 비밀번호";
+        pwMsg.classList.add("success");
+        pwMsg.classList.remove("error");
+        return true;
+      }else{
+        pwMsg.innerText="비밀번호 2글자 이상 입력하세요!";
+        pwMsg.classList.add("error");
+        pwMsg.classList.remove("success");
+        return false;
+      }
+    }
+
+    function ucpwCheck(){
+      let cpw=signupForm.check_pw.value;
+      let pw=signupForm.pw.value;
+      if(pw){
+        if(pw!==cpw){
+          cpwMsg.innerText="입력한 두 비밀번호가 일치하지 않습니다.";
+          cpwMsg.classList.add("error");
+          cpwMsg.classList.remove("success");
+          return false;
+        }else {
+          cpwMsg.innerText="비밀번호 일치";
+          cpwMsg.classList.add("success");
+          cpwMsg.classList.remove("error");
+          return true;
+        }
+      }
+    }
+
+
+    function birthCheck(){
+      let birth=signupForm.birth.value;
+      if(!birth) {
+        birthMsg.innerText = "생일을 선택하세요";
+        birthMsg.classList.add("error");
+        birthMsg.classList.remove("success");
+        return false;
+      }else{
+        birthMsg.innerText="";
+        birthMsg.classList.remove("error");
+        return true;
+      }
+    }
+
+    function uphoneCheck(){ // 선언한 변수명과 함수명이 동일하면 안된다!!
+      let phone=signupForm.phone.value;
+      if(!phone){
+        phoneMsg.innerText="핸드폰 번호를 입력하세요";
+        phoneMsg.classList.add("error");
+        phoneMsg.classList.remove("success");
+        return false;
+      }else{
+        phoneMsg.innerText="";
+        phoneMsg.classList.remove("error");
+        return true;
+      }
+    }
+
+    function uemailCheck(){
+      let email=signupForm.email.value;
+      if(!email){
+        emailMsg.innerText="이메일을 입력하세요";
+        emailMsg.classList.add("error");
+        emailMsg.classList.remove("success");
+        return false;
+      }else{
+        emailMsg.innerText="";
+        emailMsg.classList.remove("error");
+        return true;
+      }
+    }
+
+
+
+  </script>
+
+</main>
+</body>
+</html>

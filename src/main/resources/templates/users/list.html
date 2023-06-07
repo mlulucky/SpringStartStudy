@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>유저 리스트(DataSource 주입)</h1>
+<!--    <p th:text="${users}"></p>  -->
+<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>phone</th>
+        <th>birth</th>
+        <th>gender</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u: ${users}">
+        <td th:text="${u.uId}"></td>
+        <td th:text="${u.name}"></td>
+        <td th:text="${u.phone}"></td>
+        <td th:text="${u.birth}"></td>
+        <td th:text="${u.gender}"></td>
+<!--        자동으로 겟을 붙인다 (getter/setter 로 안 불러오와도 된다.) -->
+<!--        <td th:text="${u.getUId()}"></td> -->
+<!--        속성에 th 가 있으면 렌더링한다. jsp 와 퍼그의 중간단게의 심플하면서도 명시적인 - 스프링 -->
+    </tr>
+
+    <!--    반복 users 를 u 라는 변수상자에 담는다.-->
+    </tbody>
+</table>
+</body>
+</html>
